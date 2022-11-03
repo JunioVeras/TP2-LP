@@ -25,13 +25,13 @@ use "testCases.sml";
 val interpFile = TextIO.openAppend "Plc-Output";
 val caseIdx = ref 1
 
-fun writeResult r = 
-	let
-		val res = run r
-		val idx = !caseIdx
-	in
-		TextIO.output(interpFile, (Int.toString idx ^ ". " ^ res ^ "\n")); caseIdx := !caseIdx + 1
-	end;
+fun writeResult r =
+		let
+			val res = run r
+			val idx = !caseIdx
+		in
+			TextIO.output(interpFile, (Int.toString idx ^ ". " ^ res ^ "\n")); caseIdx := !caseIdx + 1
+		end;
 
 (* Test interpreter *)
 map (fn x => writeResult (#2(x))) cases;
