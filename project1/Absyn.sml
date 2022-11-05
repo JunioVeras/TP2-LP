@@ -22,7 +22,7 @@ datatype expr =
   | Call of expr * expr
   | List of expr list
   | Item of int * expr
-  (* Tipo arg, nome das variaveis (() - nada, x - a variavel, $list - varios args, corpo) *)
+  (* Args list, nome das variaveis (() - nada, x - a variavel, $list - varios args, corpo) *)
   | Anon of plcType * string * expr;
 
 datatype plcVal =

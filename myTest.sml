@@ -16,12 +16,13 @@ Control.Print.printDepth  := 1000;
 Control.Print.stringDepth := 1000;
 
 open PlcFrontEnd;
+TextIO.output(TextIO.stdOut, "\n\n");
 use "PlcChecker.sml";
 (* use "PlcInterp.sml";
 use "Plc.sml"; *)
 
 TextIO.output(TextIO.stdOut, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 
-(* val abs = fromFile "tests/t1.plc"; *)
-val abs = fromString "(1,false,())";
+(* val abs = fromFile "PlcPrograms/Prog1.plc"; *)
+val abs = fromString "ise ((fn () => 1 end )::([Nil -> Int] []))";
 val result = teval abs [];
