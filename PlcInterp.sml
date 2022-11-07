@@ -8,12 +8,7 @@ exception NotAFunc
 
 fun eval (e:expr) (env: plcVal env) : plcVal =
         (case e of
-                Var(x) => 
-                    let val  a = TextIO.output(TextIO.stdOut, val2string(lookup env x) ^ "\n")
-                    in
-                        lookup env x
-                    end
-                (* lookup env x *)
+                Var(x) => lookup env x
             | ConI(i) => IntV(i)
             | ConB(b) => BoolV(b)
             | List(l) => ListV(map (fn x => eval x env) l)
@@ -35,9 +30,9 @@ fun eval (e:expr) (env: plcVal env) : plcVal =
             | Call(e1, e2) =>
                 let
                     val func = eval e1 env
-                    val Clos(f, argName, body, env') = func
+                    val Clos(f, argName, body, env' ) = func
                     val v2 = eval e2 env
-                    val env''= ((argName, v2)::(f, func)::env')
+                    val env'' = ((argName, v2)::(f, func)::env')
                 in
                     eval body env''
                 end
