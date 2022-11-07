@@ -28,14 +28,59 @@ fun teval (e:expr) (env: plcType env) : plcType =
             Var(x) => lookup env x
         | ConI(_) => IntT
         | ConB(_) => BoolT
-        | ESeq(SeqT(t)) => SeqT(t)
         | List(l) => ListT(map (fn x => teval x env) l)
+        | ESeq(SeqT(t)) => SeqT(t)
         | Let(x, e1, e2) =>
             let 
                 val tX = teval e1 env
                 val env' = (x, tX)::env
             in
                 teval e2 env'
+            end
+        | Letrec(f, types, argName, retType, body, e1) =>
+            let
+                val env' = (f, FunT(types, retType))::(argName, types)::env
+                val env'' = (f, FunT(types, retType))::env
+                val tBody = teval body env'
+            in
+                if tBody = retType
+                then 
+                    teval e1 env'' 
+                else 
+                    raise WrongRetType
+            end
+        | Anon(types, argName, body) =>
+            (case argName of
+                    "()" => FunT(ListT [], teval body env)
+                | _ => FunT(types, teval body ((argName, types)::env))
+            )
+        | Call(e1, e2) =>
+            let
+                val t1 = teval e1 env
+                val t2 = teval e2 env
+            in
+                (case t1 of
+                        FunT(aT, rT) => if aT = t2 
+                            then 
+                                rT 
+                            else
+                                raise CallTypeMisM
+                    | _ => raise NotFunc
+                )
+            end
+        | If(cond, e1, e2) =>
+            let
+                val tCond = teval cond env
+                val t1 = teval e1 env
+                val t2 = teval e2 env
+            in
+                if tCond = BoolT 
+                then 
+                    if t1 = t2 
+                    then t1 
+                    else raise DiffBrTypes
+                else 
+                    raise IfCondNotBool
             end
         | Prim1(opr, e1) =>
             let 
@@ -104,11 +149,6 @@ fun teval (e:expr) (env: plcType env) : plcType =
                 )
                 
             end
-        | Anon(types, argName, body) =>
-            (case argName of
-                    "()" => FunT(ListT [], teval body env)
-                | _ => FunT(types, teval body ((argName, types)::env))
-            )
         | _   =>  raise UnknownType
 ;
 (* use "myTest.sml"; *)
