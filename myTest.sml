@@ -24,5 +24,6 @@ use "Plc.sml"; *)
 TextIO.output(TextIO.stdOut, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 
 (* val abs = fromFile "PlcPrograms/Prog1.plc"; *)
-val abs = fromString "ise ((fn () => 1 end )::([Nil -> Int] []))";
+val abs = fromFile "tests/t1.plc";
+(* val abs = fromString "var x = 1; match x with "; *)
 val result = teval abs [];

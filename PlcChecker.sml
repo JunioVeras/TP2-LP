@@ -82,6 +82,31 @@ fun teval (e:expr) (env: plcType env) : plcType =
                 else 
                     raise IfCondNotBool
             end
+        | Match(e1, mList) =>
+            let
+                val retType = 
+                    if mList = [] 
+                    then raise NoMatchResults
+                    else teval (#2(hd mList)) env
+                    
+                fun validMatchTypes (t1, t2, []) = t2
+                    | validMatchTypes (t1, t2, (SOME(mExpr), result)::t) =
+                        if (teval mExpr env) = t1 
+                        then 
+                            if (teval result env) = t2
+                            then validMatchTypes(t1, t2, t)
+                            else raise MatchResTypeDiff
+                        else 
+                            raise MatchCondTypesDiff
+                    | validMatchTypes (t1, t2, (NONE, result)::t) =
+                        if (teval result env) = t2
+                        then 
+                            validMatchTypes(t1, t2, t)
+                        else 
+                            raise MatchResTypeDiff
+            in
+                validMatchTypes(teval e1 env, retType, mList)
+            end
         | Prim1(opr, e1) =>
             let 
                 val t1 = teval e1 env
@@ -138,7 +163,7 @@ fun teval (e:expr) (env: plcType env) : plcType =
                     | _ =>  raise UnknownType
                 )
             end
-        | Item(i, e) => 
+        | Item(i, e) =>
             let
                 fun findIth (n, []) = raise ListOutOfRange
                     | findIth(n, h::t) = if n = i then h else findIth(n + 1, t)
@@ -149,6 +174,6 @@ fun teval (e:expr) (env: plcType env) : plcType =
                 )
                 
             end
-        | _   =>  raise UnknownType
+        | _ => raise UnknownType
 ;
 (* use "myTest.sml"; *)
