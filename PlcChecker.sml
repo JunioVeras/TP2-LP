@@ -163,12 +163,12 @@ fun teval (e:expr) (env: plcType env) : plcType =
                     | _ =>  raise UnknownType
                 )
             end
-        | Item(i, e) =>
+        | Item(i, e1) =>
             let
                 fun findIth (n, []) = raise ListOutOfRange
                     | findIth(n, h::t) = if n = i then h else findIth(n + 1, t)
             in
-                (case (teval e env) of
+                (case (teval e1 env) of
                         ListT(l) => findIth (1, l)
                     | _ => raise OpNonList
                 )
