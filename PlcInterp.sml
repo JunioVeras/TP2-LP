@@ -39,10 +39,8 @@ fun eval (e:expr) (env: plcVal env) : plcVal =
             | If(cond, e1, e2) =>
                 let
                     val BoolV(b) = eval cond env
-                    val v1 = eval e1 env
-                    val v2 = eval e2 env
                 in
-                    if b then v1 else v2
+                    if b then (eval e1 env) else (eval e2 env)
                 end
             | Match(e1, mList) =>
                 let
