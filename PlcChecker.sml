@@ -29,7 +29,11 @@ fun teval (e:expr) (env: plcType env) : plcType =
         | ConI(_) => IntT
         | ConB(_) => BoolT
         | List(l) => ListT(map (fn x => teval x env) l)
-        | ESeq(SeqT(t)) => SeqT(t)
+        | ESeq(s) => 
+            (case s of 
+                    SeqT(t) => SeqT(t)
+                | _ => raise EmptySeq
+            )
         | Let(x, e1, e2) =>
             let 
                 val tX = teval e1 env
@@ -114,16 +118,8 @@ fun teval (e:expr) (env: plcType env) : plcType =
                 (case (opr, t1) of
                         ("!", BoolT) => BoolT
                     | ("-", IntT) => IntT
-                    | ("hd", SeqT(t)) => 
-                        (case e1 of
-                                ESeq(_) => raise EmptySeq
-                            | _ => t
-                        )
-                    | ("tl", SeqT(t)) => 
-                        (case e1 of
-                                ESeq(_) => raise EmptySeq
-                            | _ => SeqT(t)
-                        )
+                    | ("hd", SeqT(t)) => t
+                    | ("tl", SeqT(t)) => SeqT(t)
                     | ("ise", SeqT(t)) => BoolT
                     | ("print", _) => ListT []
                     | _ =>  raise UnknownType
@@ -174,6 +170,5 @@ fun teval (e:expr) (env: plcType env) : plcType =
                 )
                 
             end
-        | _ => raise UnknownType
 ;
 (* use "myTest.sml"; *)

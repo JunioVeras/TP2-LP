@@ -17,14 +17,14 @@ Control.Print.stringDepth := 1000;
 
 open PlcFrontEnd;
 TextIO.output(TextIO.stdOut, "\n\n");
-val interpFile = TextIO.openAppend "test-output";
 use "PlcChecker.sml";
 use "PlcInterp.sml";
 use "Plc.sml";
-(* use "testCases.sml"; *)
+use "testCases.sml";
 
 
 (* val interpFile = TextIO.openAppend "Plc-Output"; *)
+val interpFile = TextIO.openAppend "test-output";
 val caseIdx = ref 1
 
 fun getNth (n: int) (i: int) [] = raise ERRO_NOSSO1
@@ -36,15 +36,15 @@ fun writeResult r =
             val res = run r
             val idx = !caseIdx
         in
-            TextIO.output(TextIO.stdOut, (Int.toString idx ^ ". " ^ res ^ "\n")); caseIdx := !caseIdx + 1
+            TextIO.output(interpFile, (Int.toString idx ^ ". " ^ res ^ "\n")); caseIdx := !caseIdx + 1
         end;
 
 (* Test interpreter *)
-(* map (fn x => writeResult (#2(x))) cases; *)
 (* writeResult (#2(getNth 1 1 cases)); *)
+map(fn x => writeResult (#2 x)) cases;
 
-(* val abs = fromFile "PlcPrograms/Prog1.plc"; *)
-val abs = fromString "fun rec fac (Int n) : Int = if true then 1 else n * fac(n - 1); fac 0";
+(* val abs = fromFile "tests/t5.plc"; *)
+(* writeResult abs; *)
 
 
 TextIO.output(TextIO.stdOut, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");

@@ -30,11 +30,17 @@ fun eval (e:expr) (env: plcVal env) : plcVal =
             | Call(e1, e2) =>
                 let
                     val func = eval e1 env
-                    val Clos(f, argName, body, env' ) = func
-                    val v2 = eval e2 env
-                    val env'' = ((argName, v2)::(f, func)::env')
-                in
-                    eval body env''
+                in 
+                    (case func of 
+                            Clos(f, argName, body, env') =>  
+                                let 
+                                    val v2 = eval e2 env
+                                    val env'' = ((argName, v2)::(f, func)::env')
+                                in
+                                    eval body env''
+                                end
+                        | _ => raise NotAFunc
+                    )
                 end
             | If(cond, e1, e2) =>
                 let
@@ -45,7 +51,7 @@ fun eval (e:expr) (env: plcVal env) : plcVal =
             | Match(e1, mList) =>
                 let
                     val v1 = eval e1 env
-                    fun matchValue (v, []) = raise NoMatchResults
+                    fun matchValue (v, []) = raise ValueNotFoundInMatch
                         | matchValue (v, (SOME mExpr, res)::t) = 
                             if v = (eval mExpr env)
                             then eval res env
@@ -61,15 +67,17 @@ fun eval (e:expr) (env: plcVal env) : plcVal =
                     (case (opr, v1) of
                             ("!", BoolV(b)) => BoolV(not b)
                         | ("-", IntV(i)) => IntV(~i)
-                        | ("hd", SeqV(l)) => hd l
-                        | ("tl", SeqV(l)) => SeqV(tl l)
+                        | ("hd", SeqV(l)) => 
+                            if l = [] 
+                            then raise HDEmptySeq 
+                            else hd l
+                        | ("tl", SeqV(l)) => 
+                            if l = [] 
+                            then raise TLEmptySeq 
+                            else SeqV(tl l)
                         | ("ise", SeqV(l)) => BoolV(l = [])
-                        | ("print", _) =>
-                            let 
-                                val a = TextIO.output(TextIO.stdOut, val2string (eval e1 env) ^ "\n")
-                            in
-                                ListV []
-                            end
+                        | ("print", _) => (print((val2string v1) ^ "\n"); ListV [])
+                        | _ => raise Impossible
                     )
                 end
             | Prim2(opr, e1, e2) =>
