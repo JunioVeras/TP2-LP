@@ -44,8 +44,9 @@ fun writeResult r =
 map(fn x => writeResult (#2 x)) cases;
 
 (* val abs = fromFile "tests/t5.plc"; *)
+(* val abs = fromString "1 :: 2 :: ([Int] [])"; *)
 (* writeResult abs; *)
 
 
-TextIO.output(TextIO.stdOut, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-val result = run abs;
+(* TextIO.output(TextIO.stdOut, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+val result = run abs; *)

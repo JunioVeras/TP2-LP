@@ -22,11 +22,12 @@ use "Plc.sml";
 use "testCases.sml";
 
 val interpFile = TextIO.openAppend "Bad-Plc-Output";
+(* val interpFile = TextIO.openAppend "test-output"; *)
 val caseIdx = ref 1
 
-fun getNth n i [] = []
-	| getNth n i (h::t) =
-		if n = i then h else getNth n i+1 t;
+fun getNth (n, i, []) = raise ERRO_NOSSO1
+	| getNth (n, i, (h::t)) =
+		if n = i then h else getNth (n, i+1, t);
 
 fun writeResult r = 
 		let
@@ -37,9 +38,9 @@ fun writeResult r =
 		end;
 
 (* Test interpreter *)
+map(fn x => writeResult (#2 x)) bad;
 
-writeResult (#2(getNth 3 0 bad))
+(* TextIO.output(TextIO.stdOut, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+writeResult (#2(getNth (13, 0, bad))) *)
 
-TextIO.closeOut interpFile;
-
-OS.Process.exit(OS.Process.success);
+(* use "badFullTest.sml"; *)
