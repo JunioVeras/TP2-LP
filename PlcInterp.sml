@@ -97,6 +97,7 @@ fun eval (e:expr) (env: plcVal env) : plcVal =
                         | ("!=", _, _) => BoolV(v1 <> v2)
                         | ("::", _, SeqV(l)) => SeqV(v1::l)
                         | (";", _, _) => v2
+                        | _ => raise Impossible
                     )
                 end
             | Item(i, e1) =>

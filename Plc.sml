@@ -8,8 +8,8 @@ fun run (e:expr) : string =
             end)
         handle 
             SymbolNotFound => "Symbol not found."
-        | EmptySeq => "Plc Checker: Empty sequence."
-        | UnknownType => "Plc Checker: Unknown type."
+        | EmptySeq => "Plc Checker: Empty sequence should have a sequence type."
+        | UnknownType => "Plc Checker: Unknown operator, or type error."
         | NotEqTypes => "Plc Checker: Types in comparison are different."
         | WrongRetType => "Plc Checker: Wrong return type in function."
         | DiffBrTypes => "Plc Checker: 'if' branch types differ."
@@ -21,9 +21,9 @@ fun run (e:expr) : string =
         | NotFunc => "teval Call: not a function."
         | ListOutOfRange => "Plc Checker: List index out of range."
         | OpNonList => "Plc Checker: Selection with operator # applied to non-list."
-        | Impossible => "Plc Interp: impossible operation."
+        | Impossible => "Plc Interp: Impossible evalulate expression."
         | HDEmptySeq => "Plc Interp: 'hd' empty sequence argument."
         | TLEmptySeq => "Plc Interp: 'tl' empty sequence argument."
         | ValueNotFoundInMatch => "Plc Interp: value not found in match."
-        | NotAFunc => "Plc Interp: not a function."
+        | NotAFunc => "Plc Interp: eval Call: not a function.";
 ;
